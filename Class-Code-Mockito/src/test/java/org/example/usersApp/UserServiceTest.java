@@ -41,6 +41,13 @@ class UserServiceTest {
 //                Stub the method for findByIdFromDB(99) to make sure this returns a null value
 //                Check if "User Not Found" is returned by our method in the Service layer
 
+    @Test
+    void userNotFound() {
+        when(userRepository.findByIdFromDB(99)).thenReturn(null);
+
+        String foundUser = userService.getUserNameById(99);
+        assertEquals("User Not Found", foundUser);
+    }
 
     @Test
     void getAllUsers(){
