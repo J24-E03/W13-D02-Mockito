@@ -24,7 +24,7 @@ public class UserRepository {
         return users;
     }
 
-    public User createNewUser(String name, int id){
+    public User createNewUserInDB(String name, int id){
         User newUser = new User(id,name);
         users.add(newUser);
         return newUser;
@@ -38,6 +38,16 @@ public class UserRepository {
         }
         return null;
     }
+
+    public User findByIdFromDB2(int id){
+        for(User user : users){
+            if(user.getId()==id){
+                return user;
+            }
+        }
+        throw new RuntimeException("User Not Found");
+    }
+
 
 
 
