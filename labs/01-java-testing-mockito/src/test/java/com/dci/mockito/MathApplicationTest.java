@@ -5,13 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.internal.stubbing.answers.AnswersWithDelay;
-import org.mockito.internal.stubbing.answers.Returns;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -22,13 +17,17 @@ public class MathApplicationTest {
     MathApplication mathApplication = new MathApplication();
 
     @Mock
-    CalculatorService calcService;
+    CalculatorService calcService ;
 
     @Test
     @DisplayName("Use of When()  and thenReturn()")
     public void testMathApplicationUsingWhen() {
-
         //TODO: add the expectations of calc service calls
+
+        when(calcService.add(10.0,20.0)).thenReturn(30.0);
+        when(calcService.subtract(20.0,10.0)).thenReturn(30.0);
+        when(calcService.divide(20.0,2.0)).thenReturn(10.0);
+        when(calcService.multiply(10.0,20.0)).thenReturn(200.0);
 
         Assertions.assertEquals(mathApplication.add(10.0, 20.0), 30.0);
         Assertions.assertEquals(mathApplication.subtract(20.0, 10.0), 10.0);
@@ -46,6 +45,10 @@ public class MathApplicationTest {
         mathApplication.multiply(10.0, 20.0);
 
         //TODO: verify calc service calls made for the above calls
+        verify(calcService.add(10.0,20.0));
+        verify(calcService.subtract(20.0,10.0));
+        verify(calcService.divide(20.0,2.0));
+        verify(calcService.multiply(10.0,20.0));
     }
 
     @Test
@@ -62,6 +65,10 @@ public class MathApplicationTest {
         mathApplication.divide(20.0, 2.0);
 
         //TODO: verify calc service calls made for the above calls
+        verify(calcService, times(3)).add(10.0,20.0);
+        verify(calcService, times(2)).subtract(20.0, 10.0);
+        verify(calcService, times(1)).divide(20.0, 2.0);
+        verify(calcService,never()).multiply(anyDouble(),anyDouble());
 
 
     }
@@ -79,7 +86,11 @@ public class MathApplicationTest {
 
         mathApplication.divide(20.0, 2.0);
 
-        ////TODO: verify calc service calls made for the above calls
+        //TODO: verify calc service calls made for the above calls
+        verify(calcService, atMost(3)).add(10.0, 20.0);
+        verify(calcService, atLeast(2)).subtract(20.0, 10.0);
+        verify(calcService, atLeastOnce()).divide(20.0, 2.0);
+        verify(calcService, never()).multiply(anyDouble(), anyDouble());
 
 
     }
@@ -89,6 +100,9 @@ public class MathApplicationTest {
     public void verify_ExceptionHandling() {
 
         //TODO:add the expected exceptions thrown for the below method calls
+        when(calcService.add(0.0,0.0)).thenThrow(new RuntimeException("Both arguments cannot be zero"));
+        when(calcService.subtract(30.0,30.0)).thenThrow(new IllegalArgumentException("Invalid Arguments"));
+        when(calcService.divide(20.0,0.0)).thenThrow(new ArithmeticException("Cannot be divided by zero"));
 
 
         RuntimeException runtimeException = Assertions.assertThrows(RuntimeException.class, () -> mathApplication.add(0, 0));
@@ -117,6 +131,11 @@ public class MathApplicationTest {
         Assertions.assertEquals(mathApplication.add(10.0, 20.0), 30.0);
 
         //TODO:Verify Method call execution order
+        InOrder inOrder= inOrder(calcService);
+        inOrder.verify(calcService).add(10.0,20.0);
+        inOrder.verify(calcService).subtract(20.0,10.0);
+        inOrder.verify(calcService).divide(20.0,2.0);
+
 
     }
 
